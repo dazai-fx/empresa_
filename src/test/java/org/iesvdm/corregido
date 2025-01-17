@@ -1,0 +1,139 @@
+Test 2: Listar empleados
+java
+Copiar código
+@Test
+void test2() {
+    var listEmp = empRepo.findAll();
+    listEmp.forEach(System.out::println); // Simplemente imprime todos los empleados
+}
+Test 3: NIF desglosado en dos columnas
+java
+Copiar código
+@Test
+void test3() {
+    var listEmp = empRepo.findAll();
+
+    listEmp.stream()
+            .map(emp -> String.format("Código: %d, NIF: %s, Dígitos: %s, Letra: %s",
+                    emp.getCodigo(),
+                    emp.getNif(),
+                    emp.getNif().substring(0, emp.getNif().length() - 1), // Dígitos
+                    emp.getNif().substring(emp.getNif().length() - 1)))   // Letra
+            .forEach(System.out::println);
+}
+Test 4: Presupuesto actual
+java
+Copiar código
+@Test
+void test4() {
+    var listDep = depRepo.findAll();
+
+    listDep.stream()
+            .map(dep -> String.format("Departamento: %s, Presupuesto Actual: %.2f",
+                    dep.getNombre(),
+                    dep.getPresupuesto() - dep.getGastos())) // Calcula el presupuesto actual
+            .forEach(System.out::println);
+}
+Test 5: Presupuesto ordenado ascendentemente
+java
+Copiar código
+@Test
+void test5() {
+    var listDep = depRepo.findAll();
+
+    listDep.stream()
+            .sorted((d1, d2) -> Double.compare(d1.getPresupuesto() - d1.getGastos(), d2.getPresupuesto() - d2.getGastos()))
+            .map(dep -> String.format("Departamento: %s, Presupuesto Actual: %.2f",
+                    dep.getNombre(),
+                    dep.getPresupuesto() - dep.getGastos()))
+            .forEach(System.out::println);
+}
+Test 6: Los 3 departamentos con mayor presupuesto
+java
+Copiar código
+@Test
+void test6() {
+    var listDep = depRepo.findAll();
+
+    listDep.stream()
+            .sorted((d1, d2) -> Double.compare(d2.getPresupuesto(), d1.getPresupuesto()))
+            .limit(3)
+            .map(dep -> String.format("Departamento: %s, Presupuesto: %.2f", dep.getNombre(), dep.getPresupuesto()))
+            .forEach(System.out::println);
+}
+Test 7: Presupuesto entre 100,000 y 200,000
+java
+Copiar código
+@Test
+void test7() {
+    var listDep = depRepo.findAll();
+
+    listDep.stream()
+            .filter(dep -> dep.getPresupuesto() >= 100000 && dep.getPresupuesto() <= 200000)
+            .map(dep -> String.format("Departamento: %s, Presupuesto: %.2f", dep.getNombre(), dep.getPresupuesto()))
+            .forEach(System.out::println);
+}
+Test 8: Lista con 5 filas desde la tercera, ordenada por código
+java
+Copiar código
+@Test
+void test8() {
+    var listEmp = empRepo.findAll();
+
+    listEmp.stream()
+            .sorted((e1, e2) -> Integer.compare(e1.getCodigo(), e2.getCodigo())) // Ordena por código
+            .skip(2) // Omite las dos primeras filas
+            .limit(5) // Toma las siguientes 5 filas
+            .forEach(System.out::println);
+}
+Test 9: Departamentos con menos de 5000 de gastos
+java
+Copiar código
+@Test
+void test9() {
+    var listDep = depRepo.findAll();
+
+    listDep.stream()
+            .filter(dep -> dep.getGastos() < 5000)
+            .sorted((d1, d2) -> Double.compare(d2.getGastos(), d1.getGastos())) // Ordena por gastos descendentes
+            .map(dep -> String.format("Departamento: %s, Gastos: %.2f", dep.getNombre(), dep.getGastos()))
+            .forEach(System.out::println);
+}
+Test 10: Empleados cuyo segundo apellido es Díaz o Moreno
+java
+Copiar código
+@Test
+void test10() {
+    var listEmp = empRepo.findAll();
+
+    listEmp.stream()
+            .filter(emp -> "Díaz".equals(emp.getApellido2()) || "Moreno".equals(emp.getApellido2()))
+            .forEach(System.out::println);
+}
+Test 11: Empleados en departamentos 2, 4 o 5
+java
+Copiar código
+@Test
+void test11() {
+    var listEmp = empRepo.findAll();
+
+    listEmp.stream()
+            .filter(emp -> {
+                int depCode = emp.getDepartamento().getCodigo();
+                return depCode == 2 || depCode == 4 || depCode == 5;
+            })
+            .map(emp -> String.format("Nombre: %s %s, NIF: %s", emp.getNombre(), emp.getApellido1(), emp.getNif()))
+            .forEach(System.out::println);
+}
+Test 12: Departamento del empleado con NIF específico
+java
+Copiar código
+@Test
+void test12() {
+    var listEmp = empRepo.findAll();
+
+    listEmp.stream()
+            .filter(emp -> "38382980M".equals(emp.getNif()))
+            .map(emp -> emp.getDepartamento().getNombre())
+            .forEach(System.out::println);
+} 
